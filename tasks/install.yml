@@ -1,0 +1,35 @@
+---
+
+- name: install required packages
+  apt:
+    name:
+      - lsb-release
+      - apt-transport-https
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: add pgp key
+  apt_key:
+    url: "https://repo.proxysql.com/ProxySQL/repo_pub_key"
+    state: present
+
+- name: add proxysql repo
+  apt_repository:
+    repo: "deb https://repo.proxysql.com/ProxySQL/proxysql-{{ proxysql_ver|default('2.0') }}.x/{{ ansible_distribution_release }}/ ./"
+    state: present
+    filename: proxysql
+
+- name: install proxysql
+  apt:
+    name: "{{ proxysql_package|default('proxysql') }}"
+    update_cache: true
+    cache_valid_time: 86400
+  notify: enable proxysql service
+
+- name: download pxcli
+  get_url:
+    url: "{{ pxcli_uri|default('https://oss.help/scripts/databases/proxysql/pxcli') }}"
+    dest: /usr/local/sbin/pxcli
+    owner: root
+    group: root
+    mode: 0700

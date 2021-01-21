@@ -1,0 +1,9 @@
+[Unit]
+After=network.target
+
+[Service]
+Restart=always
+RuntimeDirectory=mysqld
+RuntimeDirectoryMode=0777
+ExecStart=
+ExecStart=/usr/bin/proxysql --idle-threads -c /etc/proxysql.cnf --reload $PROXYSQL_OPTS
